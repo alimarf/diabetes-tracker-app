@@ -1,10 +1,12 @@
+import 'package:diabetes_app/core/networking/api_client.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:dio/dio.dart';
 import 'data/data_sources/auth_local_data_source.dart';
 import 'data/data_sources/auth_remote_data_source.dart';
 import 'data/data_sources/network_manager/auth_network_manager.dart';
 import 'data/data_sources/storage_manager/auth_storage_manager.dart';
 import 'data/repositories/auth_repository.dart';
-import 'domain/repositories/auth_repository.dart' as auth_repo;
 import 'domain/usecases/login.dart';
 import 'initializer.dart';
 
@@ -15,13 +17,14 @@ class AuthDependencyInjection {
 
   Future<void> init() async {
     try {
-      // Register storage manager only
-      // AuthNetworkManager is now registered in the root DI
+      locator.registerSingleton<AuthNetworkManager>(
+        AuthNetworkManager(locator<ApiClient>().dio),
+      );
+
       locator.registerSingleton<AuthStorageManager>(
         AuthStorageManager(AuthInitializer.authKey),
       );
 
-      // Register data sources
       locator.registerSingleton<AuthRemoteDataSource>(
         AuthRemoteDataSourceImpl(
           locator<AuthNetworkManager>(),
@@ -34,23 +37,18 @@ class AuthDependencyInjection {
         ),
       );
 
-      // Register repositories
-      locator.registerSingleton<auth_repo.AuthRepository>(
+      locator.registerSingleton<AuthRepository>(
         AuthRepositoryImpl(
           remoteDataSource: locator<AuthRemoteDataSource>(),
           localDataSource: locator<AuthLocalDataSource>(),
         ),
       );
 
-      // Register use cases
       locator.registerSingleton(
-        Login(locator<auth_repo.AuthRepository>()),
+        Login(locator<AuthRepository>()),
       );
-    } catch (e) {
-      // Ignore registration errors - likely already registered
-    }
+    } catch (e) {}
   }
 
-  // Helper method to get an instance of a registered type
   T get<T extends Object>() => locator<T>();
 }

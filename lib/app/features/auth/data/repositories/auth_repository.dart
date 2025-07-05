@@ -10,7 +10,15 @@ import 'package:dio/src/cancel_token.dart';
 
 import '../../../../../core/exceptions/server_exception.dart';
 import '../../../../../core/failure/failure.dart';
-import '../../domain/repositories/auth_repository.dart';
+
+abstract class AuthRepository {
+  Future<
+      Either<RepositoryResponse<LoginResponse>,
+          RepositoryResponse<LoginResponse>>> signIn({
+    required LoginPayload payload,
+    CancelToken? cancelToken,
+  });
+}
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'routes/app_router.dart';
 
@@ -9,13 +10,18 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ProviderScope(
+      child: _buildApp(),
+    );
+  }
+
+  Widget _buildApp() {
     return MaterialApp.router(
       title: 'Diabetes App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // Use GoRouter for navigation
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
     );
