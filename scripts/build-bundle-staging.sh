@@ -1,0 +1,1 @@
+fvm flutter build appbundle --flavor staging -t lib/main.staging.dart --release -v --no-shrink

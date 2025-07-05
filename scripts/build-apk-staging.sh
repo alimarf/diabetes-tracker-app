@@ -1,0 +1,1 @@
+fvm flutter build apk --flavor staging -t lib/main.staging.dart --release -v
