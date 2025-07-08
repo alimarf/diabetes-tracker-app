@@ -6,6 +6,7 @@ import '../features/auth/routes/auth_routes.dart';
 import '../features/glucose/routes/glucose_routes.dart';
 import '../features/home/routes/home_routes.dart';
 import '../features/meal/routes/meal_routes.dart';
+import '../features/medication/routes/medication_routes.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -24,6 +25,7 @@ class AppRouter {
       ...AuthRoutes.routes,
       ...GlucoseRoutes.routes,
       ...MealRoutes.routes,
+      ...MedicationRoutes.routes,
     ],
     redirect: (context, state) async {
       return null;

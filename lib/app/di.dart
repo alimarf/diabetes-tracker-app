@@ -1,3 +1,4 @@
+import 'package:diabetes_app/app/features/medication/di.dart';
 import 'package:get_it/get_it.dart';
 
 // Feature-specific dependency injections
@@ -16,6 +17,7 @@ class AppDependencyInjection {
     await AuthDependencyInjection(serviceLocator).init();
     await GlucoseDependencyInjection(serviceLocator).init();
     await MealDependencyInjection(serviceLocator).init();
+    await MedicationDependencyInjection(serviceLocator).init();
   }
 
   // Helper method to get an instance of a registered type

@@ -1,4 +1,5 @@
 import 'package:diabetes_app/app/features/glucose/initializer.dart';
+import 'package:diabetes_app/app/features/medication/initializer.dart';
 
 import 'features/auth/initializer.dart';
 import 'features/meal/initializer.dart';
@@ -10,5 +11,6 @@ class AppInitializer {
     await AuthInitializer().run();
     await GlucoseInitializer().run();
     await MealInitializer().run();
+    await MedicationInitializer().run();
   }
 }

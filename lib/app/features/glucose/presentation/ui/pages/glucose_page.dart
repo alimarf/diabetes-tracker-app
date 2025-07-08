@@ -34,13 +34,6 @@ class _GlucosePageState extends ConsumerState<GlucosePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Glucose Readings'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => _showLogoutConfirmationDialog(context),
-            tooltip: 'Logout',
-          ),
-        ],
       ),
       body: _buildBody(state),
       floatingActionButton: FloatingActionButton(
@@ -70,38 +63,6 @@ class _GlucosePageState extends ConsumerState<GlucosePage> {
         },
         separatorBuilder: (context, index) => const SizedBox(height: 8),
       );
-    }
-  }
-
-  void _showLogoutConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Logout Confirmation'),
-          content: const Text('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _logout(context);
-              },
-              child: const Text('Logout'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _logout(BuildContext context) {
-    ref.read(authNotifierProvider.notifier).logout();
-    if (context.mounted) {
-      context.go(Routes.login);
     }
   }
 
