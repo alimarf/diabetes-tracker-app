@@ -4,17 +4,14 @@ import 'package:diabetes_app/app/features/auth/presentation/providers/auth_state
 import 'package:diabetes_app/app/features/auth/domain/entities/login/payload/login_payload.entity.dart';
 
 import '../../../../../core/services/auth_token_manager.dart';
-import '../../data/repositories/auth_repository.dart';
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final Login loginUseCase;
   final AuthTokenManager tokenManager;
-  final AuthRepository repository;
 
   AuthNotifier({
     required this.loginUseCase,
     required this.tokenManager,
-    required this.repository,
   }) : super(const AuthState());
 
   Future<void> login({
@@ -54,6 +51,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
             userId: userId,
             errorMessage: null,
           );
+          
         },
       );
     } catch (e) {

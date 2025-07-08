@@ -1,18 +1,21 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../routes/routes.dart';
+import '../../providers/auth_providers.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
+class _SplashPageState extends ConsumerState<SplashPage>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _scaleAnimation;
@@ -46,26 +49,38 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
       ),
     );
 
-    // Start animation
     _animationController.forward();
-
-    // Navigate to next screen after animation completes
-    _navigateToNext();
+    
+    // Use Future.microtask to defer the provider modification until after build
+    Future.microtask(() => _navigateToNext());
   }
 
   Future<void> _navigateToNext() async {
-    // Add your authentication logic here
-    final isAuthenticated = false; // Replace with actual auth check
-    
-    await Future.delayed(const Duration(seconds: 3));
-    
-    if (mounted) {
-      // Navigate based on authentication status
-      if (isAuthenticated) {
-        // Navigate to home if authenticated
+    try {
+      // Get the auth notifier to check authentication
+      final authNotifier = ref.read(authNotifierProvider.notifier);
+      
+      // Check auth status (deferred to run after widget tree is built)
+      await authNotifier.checkAuthStatus();
+
+      // Wait for animation to complete
+      await Future.delayed(const Duration(seconds: 3));
+
+      // Check if widget is still mounted before navigating
+      if (!mounted) return;
+
+      // Get the current auth state
+      final authState = ref.read(authNotifierProvider);
+
+      // Navigate based on auth state
+      if (authState.isAuthenticated) {
         context.go(Routes.home);
       } else {
-        // Navigate to login if not authenticated
+        context.go(Routes.login);
+      }
+    } catch (e) {
+      // On error, navigate to login if widget is still mounted
+      if (mounted) {
         context.go(Routes.login);
       }
     }
@@ -92,13 +107,13 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // App Logo
                     Hero(
-                      tag: 'app-logo',  
+                      tag: 'app-logo',
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.1),
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const FlutterLogo(
@@ -108,16 +123,15 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                       ),
                     ),
                     const SizedBox(height: 32),
-                    // App Name
                     Text(
                       'Diabetes App',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor,
+                              ),
                     ),
                     const SizedBox(height: 8),
-                    // Tagline
                     Text(
                       'Manage your health journey',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -125,7 +139,6 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                           ),
                     ),
                     const SizedBox(height: 48),
-                    // Loading indicator
                     const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                       strokeWidth: 2.0,

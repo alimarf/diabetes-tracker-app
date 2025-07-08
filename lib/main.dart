@@ -1,4 +1,5 @@
 import 'package:diabetes_app/app/app.dart';
+import 'package:diabetes_app/app/initializer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,6 +11,7 @@ import 'core/config/app_config.dart';
 import 'core/values/flavor/flavor.dart';
 import 'initializer.dart';
 import 'app/features/auth/initializer.dart';
+import 'app/features/glucose/initializer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +41,7 @@ void main() async {
     ]);
 
     await Initializer(appConfig).run();
-    await AuthInitializer().run();
+    await AppInitializer().run();
 
     await DependencyInjection(appConfig).init();
     await AppDependencyInjection().init();

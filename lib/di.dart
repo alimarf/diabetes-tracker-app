@@ -50,9 +50,7 @@ class DependencyInjection {
         appConfig.flavor == AppFlavor.dev ||
         appConfig.flavor == AppFlavor.staging);
 
-    final isWeb = false;
-
-    if (isDebugEnvironment && !isWeb) {
+    if (isDebugEnvironment) {
       return [
         ApiInterceptor(
           tokenManager: serviceLocator<AuthTokenManager>(),

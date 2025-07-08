@@ -84,15 +84,21 @@ class ApiInterceptor extends Dio.Interceptor {
     } catch (e) {
       log("An error occurred: $e");
     } finally {
-      final token = tokenManager.getAccessToken();
-      if (token != null && !options.uri.toString().contains('login')) {
-        options.headers['Authorization'] = 'Bearer $token';
-      }
-
-      final requestId = const Uuid().v4();
-      options.headers['X-Request-ID'] = requestId;
-
-      super.onRequest(options, handler);
+      // Get the token asynchronously
+      tokenManager.getAccessToken().then((token) {
+        if (token != null && !options.uri.toString().contains('login')) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        
+        final requestId = const Uuid().v4();
+        options.headers['X-Request-ID'] = requestId;
+        
+        super.onRequest(options, handler);
+      }).catchError((error) {
+        // Handle any error in token retrieval
+        log('Error retrieving token: $error');
+        super.onRequest(options, handler);
+      });
     }
   }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../../routes/routes.dart';
 import '../../providers/auth_providers.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -14,7 +16,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  // State is now managed by Riverpod
 
   @override
   void dispose() {
@@ -26,31 +27,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Use the auth notifier to handle login
     await ref.read(authNotifierProvider.notifier).login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
-
-    // Navigation happens based on state changes in build method
   }
 
   @override
   Widget build(BuildContext context) {
-    // Listen to auth state changes
     final authState = ref.watch(authNotifierProvider);
 
-    // Handle navigation on successful login
     if (authState.isAuthenticated) {
-      // We can navigate to home here
-      // Or use a router observer to handle navigation
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // You'd use your router here, for example:
-        // context.go('/home');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login successful!')),
-        );
-      });
+      context.go(Routes.home);
     }
 
     return Scaffold(
@@ -63,7 +51,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 48.0),
-                // App Logo/Title
                 const FlutterLogo(size: 100),
                 const SizedBox(height: 24.0),
                 Text(
@@ -82,8 +69,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48.0),
-
-                // Email Field
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -104,8 +89,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   },
                 ),
                 const SizedBox(height: 16.0),
-
-                // Show error message if there is one
                 if (authState.errorMessage != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
@@ -116,8 +99,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-
-                // Password Field
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -148,21 +129,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     return null;
                   },
                 ),
-
-                // Forgot Password
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      // TODO: Implement forgot password
-                    },
+                    onPressed: () {},
                     child: const Text('Forgot Password?'),
                   ),
                 ),
-
                 const SizedBox(height: 24.0),
-
-                // Login Button
                 ElevatedButton(
                   onPressed: authState.isLoading ? null : _submitForm,
                   style: ElevatedButton.styleFrom(
@@ -184,18 +158,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         )
                       : const Text('LOGIN'),
                 ),
-
                 const SizedBox(height: 24.0),
-
-                // Sign Up Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Don't have an account?"),
                     TextButton(
-                      onPressed: () {
-                        // TODO: Navigate to sign up
-                      },
+                      onPressed: () {},
                       child: const Text('Sign Up'),
                     ),
                   ],
